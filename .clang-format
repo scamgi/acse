@@ -1,0 +1,23 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+ContinuationIndentWidth: 4
+TabWidth: 2
+UseTab: Never
+BreakBeforeBraces: Linux
+ColumnLimit: 80
+AlignEscapedNewlines: DontAlign
+AlignOperands: false
+AlignAfterOpenBracket: DontAlign
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortEnumsOnASingleLine: false
+IndentCaseLabels: true
+AlignConsecutiveMacros: false
+AlignTrailingComments: true
+AlignArrayOfStructures: Right
+MaxEmptyLinesToKeep: 2
+PenaltyBreakComment: 0
+SortIncludes: false
+...

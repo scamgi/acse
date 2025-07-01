@@ -1,0 +1,13 @@
+bad_instructions_2.s:1:4: error: expected a register
+bad_instructions_2.s:2:7: error: expected valid immediate
+bad_instructions_2.s:3:12: error: expected end of the line
+bad_instructions_2.s:4:10: error: expected parenthesis
+bad_instructions_2.s:5:11: error: expected a register
+bad_instructions_2.s:6:13: error: expected parenthesis
+bad_instructions_2.s:7:3: error: expected a register
+bad_instructions_2.s:8:7: error: expected valid immediate
+bad_instructions_2.s:9:12: error: expected comma
+bad_instructions_2.s:10:15: error: expected end of the line
+bad_instructions_2.s:11:10: error: expected parenthesis
+too many errors, aborting...
+11 error(s) generated.

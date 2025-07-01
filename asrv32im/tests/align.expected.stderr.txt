@@ -1,0 +1,1 @@
+align.s:7:9: warning: alignment in .text with an amount which is not a multiple of 4

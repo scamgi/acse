@@ -1,0 +1,31 @@
+#ASM:=riscv-none-embed-gcc -ffreestanding -nostdlib -march=rv32im -mno-relax
+ASM:=../../bin/asrv32im
+ACSE:=../../bin/acse
+acse_file=$(ACSE)
+# add .exe at the end on Windows
+ifeq ($(OS), Windows_NT)
+   acse_file=$(ACSE).exe
+endif
+
+objects=$(patsubst %.src,%.o,$(wildcard *.src))
+
+.PHONY: test
+ifeq (,$(wildcard _NO_TEST_))
+# the '_NO_TEST_' file does not exist
+test: $(objects)
+else
+# the '_NO_TEST_' file does exist
+test:
+	@echo 'info: tests in directory "$(notdir $(shell pwd))" skipped'
+endif
+
+%.o: %.s
+	$(ASM) $< -o $@
+
+.PRECIOUS: %.s
+%.s: %.src $(acse_file)
+	$(ACSE) $< -o $@
+
+.PHONY: clean 
+clean :
+	rm -f *.log *.s *.o

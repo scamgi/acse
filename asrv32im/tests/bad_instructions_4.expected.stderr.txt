@@ -1,0 +1,13 @@
+bad_instructions_4.s:1:6: error: expected a register
+bad_instructions_4.s:2:8: error: register name must be followed by a comma
+bad_instructions_4.s:3:9: error: expected valid immediate
+bad_instructions_4.s:4:9: error: expected valid immediate
+bad_instructions_4.s:5:6: error: expected a register
+bad_instructions_4.s:6:6: error: expected a register
+bad_instructions_4.s:7:6: error: expected a register
+bad_instructions_4.s:8:6: error: expected a register
+bad_instructions_4.s:9:5: error: expected end of the line
+bad_instructions_4.s:10:7: error: expected end of the line
+bad_instructions_4.s:11:8: error: expected end of the line
+too many errors, aborting...
+11 error(s) generated.
