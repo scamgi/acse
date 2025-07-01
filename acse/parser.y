@@ -70,6 +70,7 @@ void yyerror(const char *msg)
 %token TYPE
 %token RETURN
 %token READ WRITE ELSE
+%token ALL
 
 // These are the tokens with a semantic value.
 %token <ifStmt> IF
@@ -434,6 +435,10 @@ exp
     genSNE(program, rNormalizedOp2, $3, REG_0);
     $$ = getNewRegister(program);
     genOR(program, $$, rNormalizedOp1, rNormalizedOp2);
+  }
+  | ALL LPAR var_id COMMA var_id COMMA exp RPAR
+  {
+    
   }
 ;
 
