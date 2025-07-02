@@ -50,6 +50,7 @@ void yyerror(const char *msg)
   t_label *label;
   t_ifStmt ifStmt;
   t_whileStmt whileStmt;
+  t_allExpr allExpr;
 }
 
 /*
@@ -77,6 +78,7 @@ void yyerror(const char *msg)
 %token <label> DO
 %token <string> IDENTIFIER
 %token <integer> NUMBER
+%token <allExpr> ALL
 
 /*
  * Non-terminal symbol semantic value type declarations
@@ -434,6 +436,59 @@ exp
     genSNE(program, rNormalizedOp2, $3, REG_0);
     $$ = getNewRegister(program);
     genOR(program, $$, rNormalizedOp1, rNormalizedOp2);
+  }
+  | ALL LPAR var_id COMMA var_id COMMA 
+  {
+    // The first argument must be an array, the second must be a scalar.
+    if (!isArray($3) || isArray($5)) {
+      yyerror("type mismatch");
+      YYERROR;
+    }
+    
+    // Reserve a register for the result and generate an LI instruction to
+    // initialize it to 1 (true).
+    $1.rRes = getNewRegister(program);
+    genLI(program, $1.rRes, 1);
+    // Reserve a register for the array index we are accessing and loop counter
+    // and generate an LI to initialize it to zero.
+    $1.rIdx = getNewRegister(program);
+    genLI(program, $1.rIdx, 0);
+    // Generate a label for the back-edge of the loop.
+    $1.lLoop = createLabel(program);
+    assignLabel(program, $1.lLoop);
+    // Generate code to check if the array index reached the end of the array
+    // and break out of the loop (without setting the result to zero)
+    // in that case.
+    t_regID rMax = getNewRegister(program);
+    genLI(program, rMax, $3->arraySize);
+    $1.lExit = createLabel(program);
+    genBGE(program, $1.rIdx, rMax, $1.lExit);
+    // Generate code that loads the array element at the current index and
+    // stores it to the variable.
+    t_regID rElem = genLoadArrayElement(program, $3, $1.rIdx);
+    genStoreRegisterToVariable(program, $5, rElem);
+    // (the code generated up to here appears before the code that evaluates
+    // the expression)
+  }
+  exp RPAR
+  {
+    // (the code generated from here appears after the code that evaluates the
+    // expression)
+    // Generate the increment of the array index / loop counter.
+    genADDI(program, $1.rIdx, $1.rIdx, 1);
+    // Generate code that checks the expression's last value, and if it was
+    // not equal to zero (true) continue with the next loop iteration.
+    genBNE(program, $8, REG_0, $1.lLoop);
+    // If the expression's last value was false, and the result of the operator
+    // is zero (false), the branch generated above is not taken. Generate an
+    // instruction (that appears after the branch) that sets the result to
+    // zero. We are now out of the loop effectively.
+    genLI(program, $1.rRes, 0);
+    // Generate the label for exiting the loop without setting the result to
+    // zero.
+    assignLabel(program, $1.lExit);
+    // Set the result register of the expression.
+    $$ = $1.rRes;
   }
 ;
 

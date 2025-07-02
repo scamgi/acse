@@ -1,0 +1,20 @@
+int a[10], b[10], v, e, i;
+
+// Fill `a' with the numbers from 1 to 10 and `b` with 20s
+i = 0;
+while (i < 10) {
+  a[i] = i+1;
+  b[i] = 20;
+  i = i + 1;
+}
+
+// Prints 1 because all elements of `a' are greater than 0
+write(all(a, e, e>0));
+// Prints 0 because a[4] to a[9] are not less than 5
+write(all(a, e, e<5));
+// Prints 3 because all() evaluates to 0 and the value of the
+// expression is therefore 3
+write(3+all(a, e, e>5)/2);
+// Prints 0 because we are using the values from a to read from
+// b, and all values in b are greater than 15
+write(all(a, e, b[e-1]<15));
