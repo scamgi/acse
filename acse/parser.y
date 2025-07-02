@@ -438,7 +438,45 @@ exp
   }
   | ALL LPAR var_id COMMA var_id COMMA exp RPAR
   {
+    // creates a new variable
+    t_symbol result = createSymbol(program, "result", TYPE_INT, 0)
+    genStoreConstantToVariable(program, result, 1);
+
+    // creates a new index
+    t_symbol indexVar = createSymbol(program, "result", TYPE_INT, 0)
+    genStoreConstantToVariable(program, indexVar, 0);
+
+    // creates a new label here
+    t_label *beginning = createLabel(program);
+    assignLabel(program, beginning);
+
+    // if index is >= of the size of the array, it jumps directly to the end of the expression
+    // TODO: to implement this.
+
+    // assigns the $3[index] value to $5
+    t_regID indexReg = genLoadVariable(program, indexVar);
+    t_regID temp = genLoadArrayElement(program, $3, indexReg);
+    $5 = temp;
     
+    // if statement
+    t_label else = createLabel(program);
+    // jumps to the else part if exp == 0
+    genBEQ(program, $5, REG_0, else);
+
+    // if the condition is true, this code is executed
+    // i++
+    genADDI(program, indexReg, indexReg, 1);
+    genJ(program, beginning);
+
+    // else part
+    assignLabel(program, else);
+    genStoreConstantToVariable(program, result, 0);
+    t_label exitEnd = createLabel(program);
+    genJ(program, exitEnd);
+
+    assignLabel(program, exitEnd);
+    t_regID resultReg = genLoadVariable(program, result);
+    $$ = resultReg;
   }
 ;
 
