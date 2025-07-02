@@ -68,3 +68,25 @@ Use the `acse` compiler to translate your LANCE source file (e.g., `my_program.l
 ```bash
 ./acse my_program.lance -o my_program.asm
 ```
+This will generate an assembly file named my_program.asm.
+
+### 2. Assemble the RISC-V code
+Next, use the asrv32im assembler to convert the assembly file into an ELF executable.
+
+```bash
+./asrv32im my_program.asm -o my_program.o
+```
+This will produce an ELF executable file named my_program.o.
+
+### 3. Run the executable in the simulator
+Finally, use the simrv32im simulator to run your program.
+
+```bash
+./simrv32im my_program.o
+```
+You can also run the simulator in debug mode using the -d flag:
+
+```bash
+./simrv32im -d my_program.o
+```
+This will start the simulator's debugger, allowing you to step through your code, set breakpoints, and inspect the state of the machine.
