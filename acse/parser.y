@@ -438,9 +438,17 @@ exp
   }
   | ALL LPAR var_id COMMA var_id COMMA exp RPAR
   {
-    // creates a new variable
-    t_symbol result = createSymbol(program, "result", TYPE_INT, 0)
-    genStoreConstantToVariable(program, result, 1);
+
+    // MISTAKE: you need to check first if those two arrays and vars are actually in the correct position.
+    if (!isArray($3) || isArray($5)) {
+      yyerror("type mismatch");
+      YYERROR;
+    }
+
+    // // creates a new variable
+    // t_symbol result = createSymbol(program, "result", TYPE_INT, 0)
+    // genStoreConstantToVariable(program, result, 1);
+    // MISTAKE: instead of using a variable, 
 
     // creates a new index
     t_symbol indexVar = createSymbol(program, "result", TYPE_INT, 0)
