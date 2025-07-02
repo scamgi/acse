@@ -54,3 +54,17 @@ The entire toolchain is built to support the **RISC-V RV32IM** instruction set a
 - **M Extension:** Adds instructions for integer multiplication and division.
 
 The test files in this repository contain numerous examples of RV32IM instructions, such as `add`, `sub`, `mul`, `div`, `lw`, `sw`, `beq`, and `jal`, showcasing the capabilities of the toolchain.
+
+---
+
+## 🚀 How to Compile and Run LANCE Code
+
+Here's how to compile and run your LANCE code using the ACSE toolchain:
+
+### 1. Compile your LANCE code
+
+Use the `acse` compiler to translate your LANCE source file (e.g., `my_program.lance`) into RISC-V assembly code.
+
+```bash
+./acse my_program.lance -o my_program.asm
+```
