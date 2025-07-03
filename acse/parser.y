@@ -70,6 +70,7 @@ void yyerror(const char *msg)
 %token TYPE
 %token RETURN
 %token READ WRITE ELSE
+%token QUESTION COLON
 
 // These are the tokens with a semantic value.
 %token <ifStmt> IF
@@ -96,6 +97,7 @@ void yyerror(const char *msg)
  * specific keyword used (%left, %right).
  */
 
+%left QUESTION COLON
 %left OROR
 %left ANDAND
 %left OR_OP
@@ -434,6 +436,28 @@ exp
     genSNE(program, rNormalizedOp2, $3, REG_0);
     $$ = getNewRegister(program);
     genOR(program, $$, rNormalizedOp1, rNormalizedOp2);
+  }
+  | exp QUESTION exp COLON exp
+  {
+    // Reserve a new register for the result of the operation
+    $$ = getNewRegister(program);
+    // Generate a branch to the `false' case if the condition is equal to zero
+    t_label *lElse = createLabel(program);
+    genBEQ(program, $1, REG_0, lElse);
+    // Generate the assignment of the true value to the result.
+    // The instruction generated here is reached if the previous branch was
+    // not taken.
+    genADD(program, $$, $3, REG_0);
+    // Generate an unconditional jump that skips over the code for the `false'
+    // case.
+    t_label *lExit = createLabel(program);
+    genJ(program, lExit);
+    // Generate the label for the `false' case
+    assignLabel(program, lElse);
+    // Generate the assignment of the false value to the result.
+    genADD(program, $$, $5, REG_0);
+    // Generate the label necessary for skipping the `false' case.
+    assignLabel(program, lExit);
   }
 ;
 
