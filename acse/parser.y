@@ -50,6 +50,7 @@ void yyerror(const char *msg)
   t_label *label;
   t_ifStmt ifStmt;
   t_whileStmt whileStmt;
+  t_ternStmt ternStmt;
 }
 
 /*
@@ -70,10 +71,12 @@ void yyerror(const char *msg)
 %token TYPE
 %token RETURN
 %token READ WRITE ELSE
+%token COLON
 
 // These are the tokens with a semantic value.
 %token <ifStmt> IF
 %token <whileStmt> WHILE
+%token <ternStmt> QUESTION
 %token <label> DO
 %token <string> IDENTIFIER
 %token <integer> NUMBER
@@ -434,6 +437,24 @@ exp
     genSNE(program, rNormalizedOp2, $3, REG_0);
     $$ = getNewRegister(program);
     genOR(program, $$, rNormalizedOp1, rNormalizedOp2);
+  }
+  | exp QUESTION
+  {
+    $3.lExit = createLabel(program);
+    t_regID rCondition = genLoadVariable(program, $1);
+    $2.lFalse = createLabel(program);
+    genBNE(program, rCondition, $2.lFalse);
+  }
+  exp COLON
+  {
+    $$ = $3
+    genJ(program, $2.lExit);
+  }
+  exp
+  {
+    assignLabel(program, $2.lFalse);
+    $$ = $5;
+    assignLabel(program, $2.lExit);
   }
 ;
 
