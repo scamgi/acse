@@ -438,21 +438,20 @@ exp
     $$ = getNewRegister(program);
     genOR(program, $$, rNormalizedOp1, rNormalizedOp2);
   }
-  | exp QUESTION
+  | exp QUESTION exp COLON exp
   {
     $$ = getNewRegister(program); // this is important to store the result of the operation
     $2.lExit = createLabel(program);
-    t_regID rCondition = genLoadVariable(program, $1);
+    // I don't need to load the expression as a variable. I can pass it and that's it.
+    // t_regID rCondition = genLoadVariable(program, $1); 
     $2.lFalse = createLabel(program);
-    genBNE(program, rCondition, $2.lFalse);
-  }
-  exp COLON
-  {
+    genBEQ(program, $1, REG_0, $2.lFalse);
+    
+    // true
     genADD(program, $$, $3, REG_0); // to assign $3 to $$
     genJ(program, $2.lExit);
-  }
-  exp
-  {
+
+    // false
     assignLabel(program, $2.lFalse);
     genADD(program, $$, $5, REG_0); // to assign $5 to $$
     assignLabel(program, $2.lExit);
