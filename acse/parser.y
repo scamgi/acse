@@ -454,6 +454,8 @@ exp
     // false
     assignLabel(program, $2.lFalse);
     genADD(program, $$, $5, REG_0); // to assign $5 to $$
+
+    // exit
     assignLabel(program, $2.lExit);
   }
 ;
