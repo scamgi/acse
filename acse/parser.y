@@ -440,20 +440,21 @@ exp
   }
   | exp QUESTION
   {
-    $3.lExit = createLabel(program);
+    $$ = getNewRegister(program); // this is important to store the result of the operation
+    $2.lExit = createLabel(program);
     t_regID rCondition = genLoadVariable(program, $1);
     $2.lFalse = createLabel(program);
     genBNE(program, rCondition, $2.lFalse);
   }
   exp COLON
   {
-    $$ = $3
+    genADD(program, $$, $3, REG_0); // to assign $3 to $$
     genJ(program, $2.lExit);
   }
   exp
   {
     assignLabel(program, $2.lFalse);
-    $$ = $5;
+    genADD(program, $$, $5, REG_0); // to assign $5 to $$
     assignLabel(program, $2.lExit);
   }
 ;
