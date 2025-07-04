@@ -1,0 +1,7 @@
+int i;
+
+i = 0;
+while (i < 15) {
+  write(tri(i - 5));
+  i = i + 1;
+}
