@@ -20,6 +20,11 @@ typedef struct {
   t_label *lExit; ///< Label to the first instruction after the statement.
 } t_ifStmt;
 
+typedef struct {
+  t_label *lLoop;
+  t_label *lExit;
+} t_ifRepeatStmt;
+
 /** Utility structure used to store information about a while statement. */
 typedef struct {
   t_label *lLoop; ///< Label to the beginning of the loop.

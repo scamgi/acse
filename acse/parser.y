@@ -49,6 +49,7 @@ void yyerror(const char *msg)
   t_listNode *list;
   t_label *label;
   t_ifStmt ifStmt;
+  t_ifRepeatStmt ifRepeatStmt;
   t_whileStmt whileStmt;
 }
 
@@ -70,6 +71,7 @@ void yyerror(const char *msg)
 %token TYPE
 %token RETURN
 %token READ WRITE ELSE
+%token UNTIL
 
 // These are the tokens with a semantic value.
 %token <ifStmt> IF
@@ -77,7 +79,7 @@ void yyerror(const char *msg)
 %token <label> DO
 %token <string> IDENTIFIER
 %token <integer> NUMBER
-
+%token <ifRepeatStmt> IF_REPEAT
 /*
  * Non-terminal symbol semantic value type declarations
  *
@@ -183,6 +185,7 @@ statement
   | read_statement SEMI
   | write_statement SEMI
   | SEMI
+  | if_repeat_statement SEMI
 ;
 
 /* An assignment statement stores the value of an expression in the memory
@@ -303,6 +306,21 @@ write_statement
     t_regID rTmp = getNewRegister(program);
     genLI(program, rTmp, '\n');
     genPrintCharSyscall(program, rTmp);
+  }
+;
+
+if_repeat_statement
+  : IF_REPEAT LPAR exp RPAR
+  {
+    $1.lExit = createLabel(program);
+    genBEQ(program, $3, REG_0, $1.lExit);
+    $1.lLoop = createLabel(program);
+    assignLabel(program, $1.lLoop);
+  }
+  code_block UNTIL LPAR exp RPAR
+  {
+    genBEQ(program, $9, REG_0, $1.lLoop);
+    assignLabel(program, $1.lExit);
   }
 ;
 
